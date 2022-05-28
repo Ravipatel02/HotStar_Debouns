@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OmdMovie</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<style>
+    #container {
+            width: 200px;
+            height: 200px;
+            overflow: scroll;
+            background-color: white;
+            position: absolute;
+            display: none;
+            left:65%;
+        }
+</style>
+
+<body>
+    <div id="nav">
+        <div>
+            <h2>HotStor</h2>
+            <p>Tv</p>
+            <p>Movies</p>
+            <p>Sport</p>
+            <p>Disny+</p>
+            <p>KIDS</p>
+        </div>
+        <div>
+            <input oninput="debounce(main ,1000)" type="text" id="find" placeholder="enter movie search">
+            <button onclick="submit()">search</button>
+            <a href="">Login</a>
+        </div>
+        
+    </div>
+    <div id="container">
+
+    </div>
+    <div id="movie">
+        <img src="https://img1.hotstarext.com/image/upload/f_auto,t_web_m_1x/sources/r1/cms/prod/6473/1116473-h-ee4afe73ac98" alt="" height="100%" width="100%">
+
+    </div>
+    
+    
+
+</body>
+
+
+</html>
+<script>
+    function submit() {
+        let movie = document.querySelector('#find').value;
+        let url = `https://www.omdbapi.com/?t=${movie}&apikey=94b38c8a`
+        async function Omd() {
+            try {
+                let res = await fetch(url)
+
+                let data = await res.json()
+                console.log("data:", data)
+                if(data.Response=="True"){
+                    display(data)
+                }
+                else{
+                    error()
+                }
+               
+            }
+            catch (err) {
+                console.log("err", err)
+            }
+        }
+
+        Omd()
+
+    }
+
+    function error()
+    {
+        ducument.getElementById("container").style.display="block";
+        document.getElementById("movie").innerHTML = "";
+        let img = document.createElement("img");
+        img.src = "https://c.tenor.com/NpZyGNG3SLEAAAAM/this-content-is-not-available.gif";
+        document.getElementById("movie").append(img);
+    }
+
+    function display(obj){
+        document.getElementById("container").style.display='none';
+        document.getElementById("movie").innerHTML='';
+        let movie = document.getElementById("movie")
+
+        let poster1 = document.createElement('div')
+        poster1.setAttribute('class','poster')
+
+        let dis = document.createElement('div')
+        dis.setAttribute('class','dis')
+
+        let img = document.createElement('img')
+        img.src = obj.Poster;
+        poster1.append(img)
+
+        let name = document.createElement("h2");
+        name.innerHTML = `Title : ${obj.Title}`;
+        let award = document.createElement("h3");
+        award.innerHTML = `Awards : ${obj.Awards}`;
+        let rating = document.createElement("p");
+        rating.innerHTML = `IMDb rating : ${obj.imdbRating}`;
+        let release = document.createElement("p");
+        release.innerHTML = `Release : ${obj.Released}`;
+        let actors = document.createElement("p");
+        actors.innerHTML = `Actors : ${obj.Actors}`;
+        let language = document.createElement("p");
+        language.innerHTML = `Language : ${obj.Language}`;
+        if(obj.imdbRating>8.5)
+        {
+            let a = document.createElement("h1")
+            a.style.color = "green";
+            
+            a.style.textDecoration = "underline";
+            a.innerHTML = "Recommended"
+            dis.append(a);
+        }
+        dis.append(name,language,release,award,rating,actors);
+
+        movie.append(poster1,dis)
+
+    }
+
+
+
+</script>
+<script src="debouns.js"></script>
